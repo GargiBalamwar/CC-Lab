@@ -1,0 +1,28 @@
+Lex Code — prac.l
+%{
+#include <stdio.h>
+%}
+
+%%
+[0-9]+                    { printf("Number: %s\n", yytext); }
+[a-zA-Z_][a-zA-Z0-9_]*    { printf("Identifier: %s\n", yytext); }
+[+\-*/=()]                { printf("Operator: %s\n", yytext); }
+[ \t\n]+                  ;     /* ignore whitespace */
+.                         { printf("Unknown: %s\n", yytext); }
+%%
+
+int main() {
+    printf("Enter any expression:\n");
+    yylex();
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+Ubuntu Commands to Execute:
+lex prac.l        # Generate C file from Lex
+gcc lex.yy.c -o prac
+./prac
+
+Sample Input:
+a = b + 25
