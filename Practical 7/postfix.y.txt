@@ -1,0 +1,43 @@
+Yacc Code — postfix.y
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int yylex();
+void yyerror(const char *s);
+%}
+
+%token NUMBER
+
+%%
+line: expr '\n'       { printf("Result: %d\n", $1); }
+    | line expr '\n'  { printf("Result: %d\n", $2); }
+    ;
+
+expr: NUMBER                { $$ = $1; }
+    | expr expr '+'         { $$ = $1 + $2; }
+    | expr expr '-'         { $$ = $1 - $2; }
+    | expr expr '*'         { $$ = $1 * $2; }
+    | expr expr '/'         { $$ = $1 / $2; }
+    ;
+%%
+
+void yyerror(const char *s) {
+    printf("Error: %s\n", s);
+}
+
+int main() {
+    printf("Enter postfix expressions (each on a new line):\n");
+    yyparse();
+    return 0;
+}
+
+Ubuntu Commands to Execute:
+yacc -d postfix.y
+lex postfix.l
+gcc lex.yy.c y.tab.c -o postfix
+./postfix
+
+Sample Input:
+3 8 + 6 -
+56 4 /
+60 5 * 10 /

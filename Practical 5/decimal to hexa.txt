@@ -1,0 +1,31 @@
+Lex Code — prac5.l
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+%%
+[0-9]+      {
+                int num = atoi(yytext);
+                printf("0x%X ", num);   // print in hexadecimal
+            }
+
+[ \t\n]+    { printf("%s", yytext); }   // preserve spaces and newlines
+.           { printf("%s", yytext); }    // print other characters
+%%
+
+int main() {
+    printf("Enter decimal numbers (Ctrl+D to end):\n");
+    yylex();
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+Ubuntu Commands to Execute:
+lex prac5.l
+gcc lex.yy.c -o prac5
+./prac5
+
+Sample Input:
+The numbers are 10 15 255

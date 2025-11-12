@@ -1,0 +1,49 @@
+Lex Code — prac4.l
+%{
+#include <stdio.h>
+#include <ctype.h>
+int flag = 1; // used for title case
+%}
+
+%%
+[a-z]+          {
+                    for(int i = 0; yytext[i]; i++)
+                        yytext[i] = toupper(yytext[i]);
+                    printf("%s", yytext);
+                }
+
+[A-Z]+          {
+                    for(int i = 0; yytext[i]; i++)
+                        yytext[i] = tolower(yytext[i]);
+                    printf("%s", yytext);
+                }
+
+[A-Za-z]+       {
+                    if(flag) {
+                        yytext[0] = toupper(yytext[0]);
+                        for(int i = 1; yytext[i]; i++)
+                            yytext[i] = tolower(yytext[i]);
+                        flag = 0;
+                    }
+                    printf("%s", yytext);
+                }
+
+[ \t\n]+        { flag = 1; printf("%s", yytext); }  // reset for next word
+.               { printf("%s", yytext); }             // print other chars
+%%
+
+int main() {
+    printf("Enter the text:\n");
+    yylex();
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+Ubuntu Commands to Execute:
+lex prac4.l
+gcc lex.yy.c -o prac4
+./prac4
+
+Sample Input:
+hello WORLD this IS a title

@@ -1,0 +1,80 @@
+Yacc Code — icg.y
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int yylex(void);
+void yyerror(const char *s){ fprintf(stderr,"Error: %s\n", s); }
+
+int tcount = 0;
+char* newtemp(){
+    char buf[8];
+    sprintf(buf, "t%d", ++tcount);
+    return strdup(buf);
+}
+%}
+
+%union { char *sval; }
+%token <sval> ID NUM
+%type  <sval> expr
+
+%left '+' '-'
+%left '*' '/'
+
+%%
+input:
+    /* empty */
+  | input line
+  ;
+
+line:
+    '\n'
+  | expr '\n'   { printf("# Final result in %s\n\n", $1); free($1); }
+  ;
+
+expr:
+    ID     { $$ = $1; }
+  | NUM    { $$ = $1; }
+  | expr '+' expr {
+        char *t = newtemp();
+        printf("%s = %s + %s\n", t, $1, $3);
+        free($1); free($3);
+        $$ = t;
+    }
+  | expr '-' expr {
+        char *t = newtemp();
+        printf("%s = %s - %s\n", t, $1, $3);
+        free($1); free($3);
+        $$ = t;
+    }
+  | expr '*' expr {
+        char *t = newtemp();
+        printf("%s = %s * %s\n", t, $1, $3);
+        free($1); free($3);
+        $$ = t;
+    }
+  | expr '/' expr {
+        char *t = newtemp();
+        printf("%s = %s / %s\n", t, $1, $3);
+        free($1); free($3);
+        $$ = t;
+    }
+  | '(' expr ')'  { $$ = $2; }
+  ;
+%%
+int main(void){
+    printf("Enter arithmetic expressions (one per line):\n");
+    yyparse();
+    return 0;
+}
+
+Ubuntu Commands to Execute:
+yacc -d icg.y
+lex icg.l
+gcc lex.yy.c y.tab.c -o icg
+./icg
+
+Sample Input:
+(a + b) * (c - d)
+x + y * z

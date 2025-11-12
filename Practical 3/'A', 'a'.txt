@@ -1,0 +1,28 @@
+Lex Code — prac3.l
+%{
+#include <stdio.h>
+int count = 0;
+%}
+
+%%
+[Aa][a-zA-Z]*     { count++; }      /* Words starting with 'A' or 'a' */
+[ \t\n]+          ;                 /* Ignore spaces and newlines */
+.                 ;                 /* Ignore other characters */
+%%
+
+int main() {
+    printf("Enter the text (Ctrl+D to stop):\n");
+    yylex();
+    printf("\nNumber of words starting with 'A' or 'a': %d\n", count);
+    return 0;
+}
+
+int yywrap() { return 1; }
+
+Ubuntu Commands to Execute:
+lex prac3.l
+gcc lex.yy.c -o prac3
+./prac3
+
+Sample Input:
+Apple is an Amazing fruit and also a healthy choice.
